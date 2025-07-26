@@ -184,11 +184,12 @@ nav {
 }
 
 #discover {
-    background-image:linear-gradient(#000000d5,50%,#ffffffe8), url("../assets/img/discover-bg.png");
+    background-image:linear-gradient(rgba(0,0,0,0.02), rgba(0,0,0,0.02)), url("../assets/img/discover-bg5.png");
     background-blend-mode: screen;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     margin: calc(-100vw + 100%);
     height: 120vh;
     display: flex;
@@ -233,7 +234,8 @@ nav {
     }
 }
 
- #welcome{
+ #welcome {
+    background-color: none;
     margin-top: 100px;
     text-align: center;
     img {
@@ -253,10 +255,11 @@ nav {
         }
     }
     .welcome-section-content {
-        background-image: linear-gradient(var(--light-color),#fff,var(--light-color));
-        background-size: cover;
-        background-position: center;
+        background: none;
         margin-top: 70px;
+        h2 {
+            color: var(--light-color);
+        }
     }
 }
 
@@ -270,6 +273,7 @@ nav {
     background-repeat: no-repeat;
     background-size: cover;
     background-position:bottom;
+    background-attachment: fixed;
 
     font-family: 'Oswald', sans-serif;
     font-style: italic;
@@ -451,7 +455,10 @@ nav {
 }
 
 #contact {
-    background: var(--primary-color);
+    background-image:linear-gradient(#dcd8d8e8,50%,#ffffffe8), url("../assets/img/discover-bg1.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    
     display: flex;
     height: 100vh;
     margin-left: calc(-50vw + 50%);
@@ -470,13 +477,13 @@ nav {
             margin-bottom: 20px;
 
             h1 {
-                color: var(--light-color);
+                color: var(--primary-color);
                 font-family: 'Oswald', sans-serif;
                 font-size: 3rem;
             }
 
             h2 {
-                color: var(--light-color);
+                color: var(--primary-color);
                 font-family: var(--font-alt);
                 font-size: 1.8rem;
                 margin-top: 10px;
@@ -494,7 +501,7 @@ nav {
                 font-weight: 600;
                 margin-bottom: 5px;
                 display: block;
-                color: var(--light-color);
+                color: var(--dark-color);
             }
 
             input, textarea {

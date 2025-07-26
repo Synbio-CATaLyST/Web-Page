@@ -14,4 +14,8 @@ html{
 
 body {
     background-color: var(--light-color);
+    background-image: url("./assets/img/discover-bg.png");
+    background-attachment: fixed;
+    background-size: cover;
+
 }
