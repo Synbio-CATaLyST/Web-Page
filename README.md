@@ -52,7 +52,7 @@ ng add angular-cli-ghpages
  Use the `ng deploy --base-href=/PROJECT_NAME/` command. Keep the `/` in. If you don't know the name of your project, look into the `tsconfig.json` file of your project. In our case, it will be
 
  ```
-ng deploy --base-href=/Web-page/
+ng deploy --base-href=/Web-Page/
  ```
 
  ### 3. Go to the url:

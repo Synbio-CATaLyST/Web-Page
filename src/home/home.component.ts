@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, signal, WritableSignal } from '@angular/core';
+import { Component, OnInit, HostListener, signal, WritableSignal, Renderer2, ElementRef } from '@angular/core';
 import { ITeamMember } from '../models/models';
 import { DetailsPanelComponent } from "../details-panel/details-panel.component";
 
@@ -9,7 +9,7 @@ import { DetailsPanelComponent } from "../details-panel/details-panel.component"
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   /**
    * Team members information
    */
@@ -111,59 +111,62 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Current year for footer
    */
   currentYear: number = new Date().getFullYear();
-  /**
-   * Toggles vibility on discover section
-   */
-  private toggleDiscoverSection = () => {
-    const discoverSection = document.getElementById('discover') as HTMLElement | null;
-    if (discoverSection) {
-      if (window.scrollY > 100 && discoverSection.style.height !== '0px') {
-        this.isDiscoverVisible.set(true);
-        discoverSection.style.height = '0px';
-        document.body.style.pointerEvents = 'none';
-        document.body.style.overflow = 'hidden';
-        discoverSection.style.transform = "translateY(-14rem)";
-        setTimeout(() => {
-          document.body.style.pointerEvents = 'auto';
-          document.body.style.overflow = '';
-        }, 1100);
-      } else if (window.scrollY <= 100 && discoverSection.style.height === '0px') {
-        this.isDiscoverVisible.set(true);
-        discoverSection.style.height = '120vh';
-        discoverSection.style.transform = '';
-      }
-    }
-  }
 
-  ngOnInit(): void {
-    window.addEventListener('scroll', this.toggleDiscoverSection);
-    window.addEventListener('mousemove', this.toggleNavbarVisibility);
-  }
-
-  ngOnDestroy(): void {
-    window.removeEventListener('scroll', this.toggleDiscoverSection);
-    window.removeEventListener('mousemove', this.toggleNavbarVisibility);
-  }
   
-  /**
-   * Toggles navbar visibility when moving mouse to top edge
-   * @param event to get current mouse position
-   */
-  private toggleNavbarVisibility(event: MouseEvent): void {
-    const navBar = document.getElementById('navbar');
-    if (navBar) {
-      const nearTop = event.clientY <= 100;
-      const discoverSection = document.getElementById('discover') as HTMLElement | null;
+  // --- Navbar control ---
+  private lastScrollTop = 0;
+  private navbarVisible = true;
+  private scrollThreshold = 50;
+  private hovering = false;
 
-      if (nearTop && discoverSection?.style.height === '0px') {
-        navBar.style.height = '100px';
-        navBar.style.visibility = 'visible';
-      } else {
-        navBar.style.height = '0';
-        navBar.style.visibility = 'hidden';
-      }
+  constructor(private renderer: Renderer2, private el: ElementRef) {}
+
+  ngOnInit() {
+    // Show navbar on init
+    this.setNavbarVisibility(true);
+
+    // Setup hover detection: reuse commented approach but fix hidden issue
+    const hoverArea = this.el.nativeElement.querySelector('#navbar');
+    if (hoverArea) {
+      hoverArea.addEventListener('mouseenter', () => {
+        this.hovering = true;
+        this.setNavbarVisibility(this.hovering);
+      });
+      hoverArea.addEventListener('mouseleave', () => {
+        this.hovering = false;
+        this.setNavbarVisibility(this.hovering);
+      });
     }
   }
+
+  /** Scroll handling (refactored from commented code) */
+  @HostListener('window:scroll', [])
+  onScroll() {
+    const currentScroll = window.scrollY;
+
+    if (this.hovering) {
+      this.setNavbarVisibility(true);
+    } else if (currentScroll < this.scrollThreshold) {
+      this.setNavbarVisibility(true);
+    } else if (currentScroll > this.lastScrollTop) {
+      // scrolling down
+      this.setNavbarVisibility(false);
+    } else {
+      // scrolling up
+      this.setNavbarVisibility(true);
+    }
+
+    this.lastScrollTop = currentScroll;
+  }
+
+  /** Toggle navbar visibility */
+  private setNavbarVisibility(visible: boolean) {
+    if (visible === this.navbarVisible) return;
+    const navbar = this.el.nativeElement.querySelector('#navbar');
+    this.renderer.setStyle(navbar, 'opacity', visible ? '1' : '0');
+    this.navbarVisible = visible;
+  }
+
   openDetailsPanel(member: ITeamMember) {
     this.selectedMember = member;
     document.body.style.overflow = 'hidden'; // prevent scrolling
